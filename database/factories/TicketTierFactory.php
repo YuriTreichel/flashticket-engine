@@ -19,9 +19,9 @@ class TicketTierFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker()->sentence(2),
-            'price' => $this->faker()->randomFloat(2, 100, 1000),
-            'total_quantity' => $this->faker()->numberBetween(1, 100),
+            'name' => $this->faker->sentence(2),
+            'price' => $this->faker->randomFloat(2, 100, 1000),
+            'total_quantity' => $this->faker->numberBetween(1, 100),
             'event_id' => Event::factory()
         ];
     }
