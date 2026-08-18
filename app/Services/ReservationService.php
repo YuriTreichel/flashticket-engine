@@ -12,7 +12,6 @@ class ReservationService
     public function reserve(int $userId, int $ticketTierId, int $quantity): Reservation
     {
         return DB::transaction(function () use ($userId, $ticketTierId, $quantity) {
-            // 1. Buscar o lote com bloqueio (lockForUpdate)
             $tier = TicketTier::where('id', $ticketTierId)->lockForUpdate()->firstOrFail();
 
             $activeReservations = $tier->reservations()->active()->sum('quantity');
@@ -28,6 +27,7 @@ class ReservationService
                 'user_id' => $userId,
                 'ticket_tier_id' => $ticketTierId,
                 'quantity' => $quantity,
+                'status' => 'pending',
                 'expires_at' => now()->addMinutes(10),
             ]);
 
