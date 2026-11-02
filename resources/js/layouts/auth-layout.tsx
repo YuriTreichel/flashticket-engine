@@ -13,8 +13,14 @@ export default function AuthLayout({
     children: React.ReactNode;
 }) {
     const { component } = usePage();
-    const layout = (component === 'auth/login' ? 'split' : 'simple') as 'simple' | 'card' | 'split';
-    const Template = layout === 'split' ? AuthSplitLayout : (layout === 'card' ? AuthCardLayout : AuthSimpleLayout);
+    const layout = (component === 'auth/login' ? 'split' : 'simple') as
+        'simple' | 'card' | 'split';
+    const Template =
+        layout === 'split'
+            ? AuthSplitLayout
+            : layout === 'card'
+              ? AuthCardLayout
+              : AuthSimpleLayout;
 
     return (
         <Template title={title} description={description}>

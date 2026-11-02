@@ -61,8 +61,10 @@
     --color-sidebar-ring: var(--sidebar-ring);
 
     --animate-element: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    --animate-slide-right: slideRightIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    --animate-testimonial: testimonialIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    --animate-slide-right: slideRightIn 1s cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+    --animate-testimonial: testimonialIn 0.8s cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
 
     @keyframes fadeSlideIn {
         from {
@@ -155,7 +157,6 @@
     opacity: 0;
     animation: testimonialIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 
 :root {
     --background: oklch(1 0 0);
