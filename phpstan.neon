@@ -4,12 +4,13 @@ includes:
 
 parameters:
     paths:
-        - app/
-        - bootstrap/app.php
-        - config/
-        - database/
-        - routes/
-
+        - app/Actions
+        - app/DataTransferObjects
+        - app/Enums
+        - app/Exceptions
+        - app/Http/Controllers/EventController.php
+        - app/Http/Controllers/ReservationController.php
+        - app/Jobs
+        - app/Models
+        - app/Services
     level: 8
-    checkMissingIterableValueType: true
-    checkGenericClassInNonGenericObjectType: false

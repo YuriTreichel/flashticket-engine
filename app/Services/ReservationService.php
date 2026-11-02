@@ -1,37 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use App\Actions\Inventory\HoldTicketsAction;
+use App\DataTransferObjects\HoldTicketsData;
 use App\Models\Reservation;
-use App\Models\TicketTier;
-use Illuminate\Support\Facades\DB;
-use Exception;
 
 class ReservationService
 {
+    public function __construct(
+        private readonly HoldTicketsAction $holdTicketsAction,
+    ) {}
+
     public function reserve(int $userId, int $ticketTierId, int $quantity): Reservation
     {
-        return DB::transaction(function () use ($userId, $ticketTierId, $quantity) {
-            $tier = TicketTier::where('id', $ticketTierId)->lockForUpdate()->firstOrFail();
+        $dto = new HoldTicketsData(
+            userId: $userId,
+            ticketTierId: $ticketTierId,
+            quantity: $quantity,
+        );
 
-            $activeReservations = $tier->reservations()->active()->sum('quantity');
-            $confirmedQuantity = $tier->reservations()->where('status', 'confirmed')->sum('quantity');
-
-            $availableTickets = $tier->total_quantity - ($confirmedQuantity + $activeReservations);
-
-            if ($availableTickets < $quantity) {
-                throw new Exception('Desculpe, não há ingressos suficientes.');
-            }
-
-            $reservation = Reservation::create([
-                'user_id' => $userId,
-                'ticket_tier_id' => $ticketTierId,
-                'quantity' => $quantity,
-                'status' => 'pending',
-                'expires_at' => now()->addMinutes(10),
-            ]);
-
-            return $reservation;
-        });
+        return $this->holdTicketsAction->execute($dto);
     }
 }
