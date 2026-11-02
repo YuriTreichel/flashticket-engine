@@ -8,20 +8,20 @@ use App\Services\ReservationService;
 test('it can reserve tickets when stock is available', function () {
     $user = User::factory()->create();
     $tier = TicketTier::factory()->create(['total_quantity' => 10]);
-    $service = new ReservationService();
+    $service = app(ReservationService::class);
     
     $reservation = $service->reserve($user->id, $tier->id, 2);
     
     $this->assertEquals(2, $reservation->quantity);
     $this->assertEquals($user->id, $reservation->user_id);
-    $this->assertEquals('pending', $reservation->status);
+    $this->assertEquals(App\Enums\ReservationStatus::PENDING, $reservation->status);
     $this->assertNotNull($reservation->expires_at);
 });
 
 test('it throws an exception when there are not enough tickets available', function () {
     $user = User::factory()->create();
     $tier = TicketTier::factory()->create(['total_quantity' => 5]);
-    $service = new ReservationService();
+    $service = app(ReservationService::class);
 
     $this->expectException(Exception::class);
     $service->reserve($user->id, $tier->id, 6);
@@ -40,7 +40,7 @@ test('it ignores expired reservations when calculating available stock', functio
         'expires_at'     => now()->subMinutes(15),
     ]);
 
-    $service = new ReservationService();
+    $service = app(ReservationService::class);
 
     $reservation = $service->reserve($user2->id, $tier->id, 1);
 
