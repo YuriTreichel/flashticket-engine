@@ -15,9 +15,6 @@
 !/storage/framework/cache/.gitignore
 !/storage/framework/sessions/.gitignore
 !/storage/framework/views/.gitignore
-/resources/js/actions
-/resources/js/routes
-/resources/js/wayfinder
 /vendor
 .DS_Store
 Thumbs.db
