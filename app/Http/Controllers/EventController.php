@@ -12,6 +12,18 @@ use Inertia\Response;
 
 class EventController extends Controller
 {
+    public function index(): Response
+    {
+        $events = Event::query()
+            ->with('ticketTiers')
+            ->latest()
+            ->paginate(12);
+
+        return Inertia::render('welcome', [
+            'events' => $events,
+        ]);
+    }
+
     public function show(Event $event): Response
     {
         $event->load('ticketTiers');

@@ -5,13 +5,19 @@ declare(strict_types=1);
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', [EventController::class, 'index'])->name('home');
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::get('/reservations/{reservation}/checkout', [ReservationController::class, 'checkout'])->name('reservations.checkout');
+    Route::post('/reservations/{reservation}/tax', [ReservationController::class, 'calculateTax'])->name('reservations.tax');
+    Route::post('/reservations/{reservation}/pay', [ReservationController::class, 'completeCheckout'])->name('reservations.pay');
+
+    Route::get('/my-tickets', [TicketController::class, 'index'])->name('tickets.index');
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
     // Organizer Portal & Gate Check-in

@@ -41,15 +41,18 @@ class QrCodeSigningService
         }
 
         try {
-            /** @var array{code: string, expires_at: int, sig: string} $payload */
-            $payload = json_decode($decodedJson, true, 512, JSON_THROW_ON_ERROR);
+            /** @var mixed $rawPayload */
+            $rawPayload = json_decode($decodedJson, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException) {
             return ['valid' => false, 'reason' => 'Malformed QR data.'];
         }
 
-        if (! isset($payload['code'], $payload['expires_at'], $payload['sig'])) {
+        if (! is_array($rawPayload) || ! isset($rawPayload['code'], $rawPayload['expires_at'], $rawPayload['sig'])) {
             return ['valid' => false, 'reason' => 'Incomplete QR payload.'];
         }
+
+        /** @var array{code: string, expires_at: int, sig: string} $payload */
+        $payload = $rawPayload;
 
         $appKey = (string) config('app.key');
         $expectedSignature = hash_hmac('sha256', "{$payload['code']}|{$payload['expires_at']}", $appKey);
