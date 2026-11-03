@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Zap } from 'lucide-react';
 
 export interface Testimonial {
     avatarSrc: string;
@@ -118,9 +118,31 @@ export default function Register({ passwordRules }: Props) {
             )}
 
             {/* Right column: registration form */}
-            <section className="flex flex-1 items-center justify-center overflow-y-auto p-8">
+            <section className="relative flex flex-1 items-center justify-center overflow-y-auto p-8">
+                {/* Back to Storefront Link */}
+                <Link
+                    href="/"
+                    className="absolute top-6 right-6 z-20 flex items-center gap-2 rounded-xl border border-border/60 bg-foreground/5 px-3.5 py-2 text-xs font-semibold text-muted-foreground backdrop-blur-md transition-all hover:border-border hover:bg-foreground/10 hover:text-foreground"
+                >
+                    <ArrowLeft className="h-4 w-4" />
+                    <span>Voltar ao site</span>
+                </Link>
+
                 <div className="w-full max-w-md py-8">
                     <div className="flex flex-col gap-6">
+                        {/* Logo Link to home */}
+                        <div className="animate-element">
+                            <Link href="/" className="inline-flex items-center gap-2 group">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 shadow-md shadow-rose-600/25 transition-transform group-hover:scale-105">
+                                    <Zap className="h-4 w-4 text-white fill-white" />
+                                </div>
+                                <div className="flex items-baseline tracking-tight">
+                                    <span className="text-base font-black text-foreground">flash</span>
+                                    <span className="text-base font-light text-muted-foreground">ticket</span>
+                                </div>
+                            </Link>
+                        </div>
+
                         <div className="space-y-2">
                             <h1 className="animate-element text-4xl leading-tight font-semibold tracking-tighter animate-delay-100 md:text-5xl">
                                 Criar Conta no {name || 'FlashTicket'}
