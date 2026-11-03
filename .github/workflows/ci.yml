@@ -47,10 +47,13 @@ jobs:
       - name: Run PHPStan (Static Analysis)
         run: ./vendor/bin/phpstan analyse --memory-limit=2G
 
+      - name: Create SQLite Database
+        run: touch database/database.sqlite
+
       - name: Run Pest / PHPUnit Test Suite
         env:
           DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
+          DB_DATABASE: database/database.sqlite
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
         run: php artisan test
