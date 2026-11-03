@@ -52,8 +52,11 @@ jobs:
 
       - name: Run Pest / PHPUnit Test Suite
         env:
+          APP_ENV: testing
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
+          SESSION_DRIVER: array
+          CACHE_STORE: array
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
         run: php artisan test
