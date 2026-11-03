@@ -20,6 +20,9 @@ enum CanadianProvince: string
     case NU = 'NU'; // Nunavut (5% GST)
     case YT = 'YT'; // Yukon (5% GST)
 
+    /**
+     * @return array{hst: float, gst: float, pst: float, qst: float}
+     */
     public function taxRates(): array
     {
         return match ($this) {

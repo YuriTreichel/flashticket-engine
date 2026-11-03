@@ -29,14 +29,13 @@ final class ValidateTicketCheckInAction
     {
         $verification = $this->qrCodeSigningService->verifyScannedPayload($qrPayload);
 
-        if (! $verification['valid']) {
+        if (! $verification['valid'] || ! isset($verification['ticket'])) {
             return [
                 'success' => false,
                 'message' => $verification['reason'] ?? 'Invalid QR payload.',
             ];
         }
 
-        /** @var Ticket $ticket */
         $ticket = $verification['ticket'];
 
         return DB::transaction(function () use ($ticket): array {
@@ -51,7 +50,7 @@ final class ValidateTicketCheckInAction
                     'success' => false,
                     'message' => 'Ticket already checked-in!',
                     'ticket' => $lockedTicket,
-                    'already_used_at' => $lockedTicket->used_at?->toIso8601String(),
+                    'already_used_at' => (string) ($lockedTicket->used_at?->toIso8601String() ?? ''),
                 ];
             }
 
@@ -68,10 +67,13 @@ final class ValidateTicketCheckInAction
                 'used_at' => now(),
             ]);
 
+            /** @var Ticket $freshTicket */
+            $freshTicket = $lockedTicket->fresh(['user', 'ticketTier.event']);
+
             return [
                 'success' => true,
                 'message' => 'Ticket successfully verified and checked-in!',
-                'ticket' => $lockedTicket->fresh(['user', 'ticketTier.event']),
+                'ticket' => $freshTicket,
             ];
         });
     }
