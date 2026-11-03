@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\PlatformController;
@@ -25,7 +26,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-tickets', [TicketController::class, 'index'])->name('tickets.index');
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
-    // Organizer Portal & Gate Check-in
+    // 1. SaaS Platform Administrator (Global Oversight)
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    });
+
+    // 2. Organizer Portal (Cinemas, Circuses, Theaters, Promoters)
     Route::prefix('organizer')->name('organizer.')->group(function () {
         Route::get('/dashboard', [OrganizerController::class, 'dashboard'])->name('dashboard');
         Route::get('/events/create', [OrganizerController::class, 'create'])->name('events.create');

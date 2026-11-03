@@ -29,11 +29,14 @@ final class IssueTicketsAction
             }
 
             $createdTickets = [];
+            $variant = $reservation->ticketVariant;
 
             for ($i = 0; $i < $reservation->quantity; $i++) {
                 $createdTickets[] = Ticket::create([
                     'user_id' => $reservation->user_id,
                     'ticket_tier_id' => $reservation->ticket_tier_id,
+                    'ticket_variant_id' => $reservation->ticket_variant_id,
+                    'variant_name' => $variant ? $variant->name : 'Standard Adult',
                     'code' => (string) Str::uuid(),
                     'status' => TicketStatus::VALID,
                 ]);
@@ -43,4 +46,3 @@ final class IssueTicketsAction
         });
     }
 }
-

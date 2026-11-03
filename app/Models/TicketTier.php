@@ -53,4 +53,12 @@ class TicketTier extends Model
     {
         return $this->hasMany(Ticket::class);
     }
+
+    /**
+     * @return HasMany<TicketVariant, $this>
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(TicketVariant::class);
+    }
 }

@@ -28,6 +28,7 @@ class ReservationController extends Controller
     {
         $validated = $request->validate([
             'ticket_tier_id' => 'required|integer|exists:ticket_tiers,id',
+            'ticket_variant_id' => 'nullable|integer|exists:ticket_variants,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
@@ -38,7 +39,8 @@ class ReservationController extends Controller
             $reservation = $this->reservationService->reserve(
                 $user->id,
                 (int) $validated['ticket_tier_id'],
-                (int) $validated['quantity']
+                (int) $validated['quantity'],
+                isset($validated['ticket_variant_id']) ? (int) $validated['ticket_variant_id'] : null,
             );
 
             return redirect()->route('reservations.checkout', $reservation)
@@ -64,7 +66,7 @@ class ReservationController extends Controller
                 ->with('error', 'Your reservation has expired.');
         }
 
-        $reservation->load(['ticketTier.event']);
+        $reservation->load(['ticketTier.event', 'ticketVariant']);
 
         return Inertia::render('checkout/show', [
             'reservation' => $reservation,
@@ -77,7 +79,15 @@ class ReservationController extends Controller
             'postal_code' => 'required|string',
         ]);
 
-        $subtotal = (float) ($reservation->quantity * (float) $reservation->ticketTier->price);
+        $baseUnitPrice = (float) $reservation->ticketTier->price;
+        if ($reservation->ticketVariant) {
+            $discountMultiplier = (100 - (float) $reservation->ticketVariant->discount_percent) / 100;
+            $unitPrice = $baseUnitPrice * $discountMultiplier;
+        } else {
+            $unitPrice = $baseUnitPrice;
+        }
+
+        $subtotal = (float) ($reservation->quantity * $unitPrice);
 
         try {
             $province = $this->taxService->detectProvinceFromPostalCode($validated['postal_code']);

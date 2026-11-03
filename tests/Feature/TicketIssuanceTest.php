@@ -103,4 +103,3 @@ test('it rejects expired QR codes', function () {
     expect($verification['valid'])->toBeFalse()
         ->and($verification['reason'])->toContain('QR code expired');
 });
-

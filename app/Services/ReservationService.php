@@ -14,12 +14,13 @@ class ReservationService
         private readonly HoldTicketsAction $holdTicketsAction,
     ) {}
 
-    public function reserve(int $userId, int $ticketTierId, int $quantity): Reservation
+    public function reserve(int $userId, int $ticketTierId, int $quantity, ?int $ticketVariantId = null): Reservation
     {
         $dto = new HoldTicketsData(
             userId: $userId,
             ticketTierId: $ticketTierId,
             quantity: $quantity,
+            ticketVariantId: $ticketVariantId,
         );
 
         return $this->holdTicketsAction->execute($dto);

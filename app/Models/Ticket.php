@@ -23,7 +23,7 @@ use Illuminate\Support\Carbon;
  */
 class Ticket extends Model
 {
-    /** @use HasFactory<\Database\Factories\TicketFactory> */
+    /** @use HasFactory<TicketFactory> */
     use HasFactory;
 
     protected $fillable = [

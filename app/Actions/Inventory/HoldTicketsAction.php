@@ -53,6 +53,7 @@ final class HoldTicketsAction
             $reservation = Reservation::query()->create([
                 'user_id' => $data->userId,
                 'ticket_tier_id' => $data->ticketTierId,
+                'ticket_variant_id' => $data->ticketVariantId,
                 'quantity' => $data->quantity,
                 'status' => ReservationStatus::PENDING,
                 'expires_at' => now()->addMinutes($holdMinutes),

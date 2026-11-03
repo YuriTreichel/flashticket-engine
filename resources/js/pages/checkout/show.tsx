@@ -24,6 +24,12 @@ interface CheckoutProps {
         id: number;
         quantity: number;
         expires_at: string;
+        ticket_variant?: {
+            id: number;
+            name: string;
+            discount_percent: number;
+            requires_id_proof: boolean;
+        } | null;
         ticket_tier: {
             id: number;
             name: string;
@@ -50,7 +56,11 @@ interface TaxBreakdown {
 }
 
 export default function CheckoutShow({ reservation }: CheckoutProps) {
-    const unitPrice = Number(reservation.ticket_tier.price);
+    const basePrice = Number(reservation.ticket_tier.price);
+    const discountMultiplier = reservation.ticket_variant
+        ? (100 - Number(reservation.ticket_variant.discount_percent)) / 100
+        : 1;
+    const unitPrice = basePrice * discountMultiplier;
     const subtotal = reservation.quantity * unitPrice;
 
     const [postalCode, setPostalCode] = useState('M5V 2T6'); // Default Toronto, ON
@@ -263,10 +273,16 @@ export default function CheckoutShow({ reservation }: CheckoutProps) {
 
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-zinc-400">
-                                        <span>
-                                            {reservation.ticket_tier.name} ×{' '}
-                                            {reservation.quantity}
-                                        </span>
+                                        <div className="flex flex-col">
+                                            <span>
+                                                {reservation.ticket_tier.name} × {reservation.quantity}
+                                            </span>
+                                            {reservation.ticket_variant && (
+                                                <span className="text-xs text-rose-400 font-medium">
+                                                    Tier: {reservation.ticket_variant.name} ({reservation.ticket_variant.discount_percent > 0 ? `${reservation.ticket_variant.discount_percent}% off` : 'Standard'})
+                                                </span>
+                                            )}
+                                        </div>
                                         <span className="font-mono text-white">
                                             CAD ${subtotal.toFixed(2)}
                                         </span>
