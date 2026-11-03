@@ -18,6 +18,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+import StorefrontLayout from '@/layouts/storefront-layout';
+
 interface MetricsProps {
     metrics: {
         total_events: number;
@@ -44,8 +46,9 @@ interface MetricsProps {
 
 export default function MetricsIndex({ metrics, recentTransactions }: MetricsProps) {
     return (
-        <div className="min-h-screen bg-[#09090b] text-zinc-100 font-sans antialiased p-6 md:p-12">
-            <Head title="Live Engine Telemetry & Concurrency Metrics" />
+        <StorefrontLayout>
+            <div className="p-6 md:p-12">
+                <Head title="Live Engine Telemetry & Concurrency Metrics" />
 
             <div className="mx-auto max-w-6xl">
                 {/* Header */}
@@ -231,5 +234,6 @@ export default function MetricsIndex({ metrics, recentTransactions }: MetricsPro
                 </div>
             </div>
         </div>
+        </StorefrontLayout>
     );
 }

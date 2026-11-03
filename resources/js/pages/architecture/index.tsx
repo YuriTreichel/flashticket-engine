@@ -15,11 +15,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 export default function ArchitectureIndex() {
     return (
-        <div className="min-h-screen bg-[#09090b] text-zinc-100 font-sans antialiased p-6 md:p-12">
-            <Head title="System Architecture & High-Concurrency Whitepaper" />
+        <StorefrontLayout>
+            <div className="p-6 md:p-12">
+                <Head title="System Architecture & High-Concurrency Whitepaper" />
 
             <div className="mx-auto max-w-5xl">
                 <div className="mb-8">
@@ -126,5 +128,6 @@ export default function ArchitectureIndex() {
                 </div>
             </div>
         </div>
+        </StorefrontLayout>
     );
 }
