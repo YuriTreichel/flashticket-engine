@@ -63,6 +63,12 @@ export default function OrganizerDashboard({
                             entry camera scanner.
                         </p>
                     </div>
+
+                    <Link href="/organizer/events/create">
+                        <Button className="gap-2 bg-white text-zinc-950 font-bold hover:bg-zinc-200">
+                            Create New Event
+                        </Button>
+                    </Link>
                 </div>
 
                 <div className="grid gap-6">
