@@ -1,4 +1,4 @@
-import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import PasskeyVerify from '@/components/passkey-verify';
@@ -8,7 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import { ArrowLeft, Eye, EyeOff, Zap } from 'lucide-react';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 
 // --- HELPER COMPONENTS (ICONS) ---
 
@@ -78,21 +78,21 @@ const TestimonialCard = ({
 const sampleTestimonials: Testimonial[] = [
     {
         avatarSrc: 'https://randomuser.me/api/portraits/women/57.jpg',
-        name: 'Mariana Souza',
-        handle: '@marianasouza',
-        text: 'Plataforma sensacional! A experiência de compra de ingressos é incrivelmente rápida e sem complicações.',
+        name: 'Sarah Jenkins',
+        handle: '@sarahj_tech',
+        text: 'Lightning-fast checkout experience. Reserved my seats in seconds with zero queues or hiccups.',
     },
     {
         avatarSrc: 'https://randomuser.me/api/portraits/men/64.jpg',
-        name: 'Rodrigo Lima',
-        handle: '@rodrigolima',
-        text: 'O melhor portal de ingressos que já usei. Design moderno, seguro e com excelente suporte para os eventos.',
+        name: 'Marcus Vance',
+        handle: '@marcusvance',
+        text: 'The best ticketing engine I have used. Sleek, secure, and fraud-proof digital wallet delivery.',
     },
     {
         avatarSrc: 'https://randomuser.me/api/portraits/men/32.jpg',
-        name: 'Felipe Neves',
-        handle: '@felipeneves',
-        text: 'Intuitivo, confiável e muito prático para gerenciar meus ingressos salvos direto no celular.',
+        name: 'David Chen',
+        handle: '@dchen_live',
+        text: 'Intuitive, highly dependable, and flawless real-time mobile QR passes right on my phone.',
     },
 ];
 
@@ -102,56 +102,45 @@ type Props = {
 };
 
 export default function Login({ status, canResetPassword }: Props) {
-    const { name } = usePage().props;
     const [showPassword, setShowPassword] = useState(false);
     const heroImageSrc =
         'https://images.unsplash.com/photo-1642615835477-d303d7dc9ee9?w=2160&q=80';
 
     return (
         <div className="font-geist flex h-[100dvh] w-[100dvw] flex-col overflow-hidden bg-background text-foreground md:flex-row">
-            <Head title="Entrar" />
+            <Head title="Sign In — FlashTicket" />
 
             {/* Left column: sign-in form */}
             <section className="relative flex flex-1 items-center justify-center overflow-y-auto p-8">
-                {/* Back to Storefront Link */}
-                <Link
-                    href="/"
-                    className="absolute top-6 left-6 z-20 flex items-center gap-2 rounded-xl border border-border/60 bg-foreground/5 px-3.5 py-2 text-xs font-semibold text-muted-foreground backdrop-blur-md transition-all hover:border-border hover:bg-foreground/10 hover:text-foreground"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                    <span>Voltar ao site</span>
-                </Link>
-
                 <div className="w-full max-w-md py-8">
                     <div className="flex flex-col gap-6">
                         {/* Logo Link to home */}
                         <div className="animate-element">
-                            <Link href="/" className="inline-flex items-center gap-2 group">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 shadow-md shadow-rose-600/25 transition-transform group-hover:scale-105">
-                                    <Zap className="h-4 w-4 text-white fill-white" />
+                            <Link href="/" className="inline-flex items-center gap-2.5 group">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 shadow-md shadow-rose-600/25 transition-transform group-hover:scale-105">
+                                    <Zap className="h-4.5 w-4.5 text-white fill-white" />
                                 </div>
                                 <div className="flex items-baseline tracking-tight">
-                                    <span className="text-base font-black text-foreground">flash</span>
-                                    <span className="text-base font-light text-muted-foreground">ticket</span>
+                                    <span className="text-xl font-black text-foreground">flash</span>
+                                    <span className="text-xl font-light text-muted-foreground">ticket</span>
                                 </div>
                             </Link>
                         </div>
 
-                        <div className="space-y-2">
-                            <h1 className="animate-element text-4xl leading-tight font-semibold tracking-tighter animate-delay-100 md:text-5xl">
-                                Bem-vindo ao {name || 'FlashTicket'}
+                        <div className="space-y-1">
+                            <h1 className="animate-element text-3xl sm:text-4xl leading-tight font-bold tracking-tight text-foreground">
+                                Sign In
                             </h1>
-                            <p className="animate-element text-muted-foreground animate-delay-200">
-                                Acesse sua conta e garanta seus ingressos para
-                                os melhores eventos
+                            <p className="animate-element text-sm text-muted-foreground">
+                                Access your account to manage your reservations and tickets
                             </p>
                         </div>
 
                         {/* Passkey authentication row */}
                         <div className="animate-element animate-delay-300">
                             <PasskeyVerify
-                                label="Entrar com chave de acesso (Passkey)"
-                                separator="Ou entre com seu e-mail"
+                                label="Sign in with Passkey"
+                                separator="Or sign in with email"
                             />
                         </div>
 
@@ -167,7 +156,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                             htmlFor="email"
                                             className="text-sm font-medium text-muted-foreground"
                                         >
-                                            Endereço de E-mail
+                                            Email Address
                                         </Label>
                                         <GlassInputWrapper>
                                             <input
@@ -178,7 +167,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                                 autoFocus
                                                 tabIndex={1}
                                                 autoComplete="email"
-                                                placeholder="Digite seu endereço de e-mail"
+                                                placeholder="name@example.com"
                                                 className="w-full rounded-2xl border-0 bg-transparent p-4 text-sm focus:ring-0 focus:outline-none"
                                             />
                                         </GlassInputWrapper>
@@ -190,7 +179,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                             htmlFor="password"
                                             className="text-sm font-medium text-muted-foreground"
                                         >
-                                            Senha
+                                            Password
                                         </Label>
                                         <GlassInputWrapper>
                                             <div className="relative">
@@ -205,7 +194,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                                     required
                                                     tabIndex={2}
                                                     autoComplete="current-password"
-                                                    placeholder="Digite sua senha"
+                                                    placeholder="Enter your password"
                                                     className="w-full rounded-2xl border-0 bg-transparent p-4 pr-12 text-sm focus:ring-0 focus:outline-none"
                                                 />
                                                 <button
@@ -237,16 +226,16 @@ export default function Login({ status, canResetPassword }: Props) {
                                                 className="custom-checkbox"
                                             />
                                             <span className="text-foreground/90">
-                                                Manter conectado
+                                                Remember me
                                             </span>
                                         </label>
                                         {canResetPassword && (
                                             <Link
                                                 href={request()}
-                                                className="font-medium text-violet-400 transition-colors hover:underline"
+                                                className="font-medium text-rose-500 transition-colors hover:underline"
                                                 tabIndex={5}
                                             >
-                                                Esqueceu sua senha?
+                                                Forgot password?
                                             </Link>
                                         )}
                                     </div>
@@ -254,17 +243,17 @@ export default function Login({ status, canResetPassword }: Props) {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="flex w-full animate-element cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors animate-delay-700 hover:bg-primary/90"
+                                        className="flex w-full animate-element cursor-pointer items-center justify-center gap-2 rounded-2xl bg-rose-600 py-4 text-sm font-semibold text-white shadow-lg shadow-rose-600/25 transition-colors animate-delay-700 hover:bg-rose-500"
                                     >
                                         {processing && <Spinner />}
-                                        Entrar
+                                        Sign In
                                     </button>
                                 </>
                             )}
                         </Form>
 
                         {status && (
-                            <div className="mb-4 text-center text-sm font-medium text-green-600">
+                            <div className="mb-4 text-center text-sm font-medium text-emerald-500">
                                 {status}
                             </div>
                         )}
@@ -272,22 +261,22 @@ export default function Login({ status, canResetPassword }: Props) {
                         <div className="relative flex animate-element items-center justify-center animate-delay-800">
                             <span className="w-full border-t border-border"></span>
                             <span className="absolute bg-background px-4 text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                                Ou continue com
+                                Or continue with
                             </span>
                         </div>
 
                         <button className="flex w-full animate-element cursor-pointer items-center justify-center gap-3 rounded-2xl border border-border py-4 text-sm font-medium transition-colors animate-delay-900 hover:bg-secondary">
                             <GoogleIcon />
-                            Continuar com o Google
+                            Continue with Google
                         </button>
 
                         <p className="animate-element text-center text-sm text-muted-foreground animate-delay-1000">
-                            Novo em nossa plataforma?{' '}
+                            Don't have an account?{' '}
                             <Link
                                 href={register()}
-                                className="font-medium text-violet-400 transition-colors hover:underline"
+                                className="font-semibold text-rose-500 transition-colors hover:underline"
                             >
-                                Criar Conta
+                                Register
                             </Link>
                         </p>
                     </div>
@@ -298,7 +287,7 @@ export default function Login({ status, canResetPassword }: Props) {
             {heroImageSrc && (
                 <section className="relative hidden flex-1 p-4 md:block">
                     <div
-                        className="absolute inset-4 animate-slide-right rounded-3xl bg-cover bg-center animate-delay-300"
+                        className="absolute inset-4 animate-slide-left rounded-3xl bg-cover bg-center animate-delay-300"
                         style={{ backgroundImage: `url(${heroImageSrc})` }}
                     ></div>
                     {sampleTestimonials.length > 0 && (
