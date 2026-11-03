@@ -14,6 +14,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        $this->withoutVite();
         $this->withoutMiddleware(PreventRequestForgery::class);
     }
 
