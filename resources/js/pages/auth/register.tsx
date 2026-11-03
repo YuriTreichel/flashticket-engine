@@ -1,11 +1,11 @@
-import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { ArrowLeft, Eye, EyeOff, Zap } from 'lucide-react';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 
 export interface Testimonial {
     avatarSrc: string;
@@ -50,19 +50,19 @@ const sampleTestimonials: Testimonial[] = [
         avatarSrc: 'https://randomuser.me/api/portraits/women/44.jpg',
         name: 'Camila Ribeiro',
         handle: '@camilasocial',
-        text: 'Comprar ingressos nunca foi tão simples. Criei minha conta em segundos e já garanti minha entrada!',
+        text: 'Buying tickets has never been smoother. Created my account in seconds and instantly secured my spot!',
     },
     {
         avatarSrc: 'https://randomuser.me/api/portraits/men/85.jpg',
         name: 'Thiago Silva',
         handle: '@thiagosilva',
-        text: 'Segurança total no pagamento e envio instantâneo dos ingressos para o celular. Recomendo muito!',
+        text: 'Bank-grade security and instant ticket generation to my phone. Truly high-performance tech.',
     },
     {
         avatarSrc: 'https://randomuser.me/api/portraits/women/12.jpg',
         name: 'Beatriz Costa',
         handle: '@biacosta',
-        text: 'O cadastro é super intuitivo. Ideal para quem não quer perder tempo na fila virtual.',
+        text: 'Zero lag, clean aesthetics, and immediate QR access. Perfect for high-demand concert drops.',
     },
 ];
 
@@ -71,7 +71,6 @@ type Props = {
 };
 
 export default function Register({ passwordRules }: Props) {
-    const { name } = usePage().props;
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -81,7 +80,7 @@ export default function Register({ passwordRules }: Props) {
 
     return (
         <div className="font-geist flex h-[100dvh] w-[100dvw] flex-col overflow-hidden bg-background text-foreground md:flex-row">
-            <Head title="Criar Conta" />
+            <Head title="Register — FlashTicket" />
 
             {/* Left column: hero image + testimonials */}
             {heroImageSrc && (
@@ -119,37 +118,27 @@ export default function Register({ passwordRules }: Props) {
 
             {/* Right column: registration form */}
             <section className="relative flex flex-1 items-center justify-center overflow-y-auto p-8">
-                {/* Back to Storefront Link */}
-                <Link
-                    href="/"
-                    className="absolute top-6 right-6 z-20 flex items-center gap-2 rounded-xl border border-border/60 bg-foreground/5 px-3.5 py-2 text-xs font-semibold text-muted-foreground backdrop-blur-md transition-all hover:border-border hover:bg-foreground/10 hover:text-foreground"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                    <span>Voltar ao site</span>
-                </Link>
-
                 <div className="w-full max-w-md py-8">
                     <div className="flex flex-col gap-6">
                         {/* Logo Link to home */}
                         <div className="animate-element">
-                            <Link href="/" className="inline-flex items-center gap-2 group">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 shadow-md shadow-rose-600/25 transition-transform group-hover:scale-105">
-                                    <Zap className="h-4 w-4 text-white fill-white" />
+                            <Link href="/" className="inline-flex items-center gap-2.5 group">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 shadow-md shadow-rose-600/25 transition-transform group-hover:scale-105">
+                                    <Zap className="h-4.5 w-4.5 text-white fill-white" />
                                 </div>
                                 <div className="flex items-baseline tracking-tight">
-                                    <span className="text-base font-black text-foreground">flash</span>
-                                    <span className="text-base font-light text-muted-foreground">ticket</span>
+                                    <span className="text-xl font-black text-foreground">flash</span>
+                                    <span className="text-xl font-light text-muted-foreground">ticket</span>
                                 </div>
                             </Link>
                         </div>
 
-                        <div className="space-y-2">
-                            <h1 className="animate-element text-4xl leading-tight font-semibold tracking-tighter animate-delay-100 md:text-5xl">
-                                Criar Conta no {name || 'FlashTicket'}
+                        <div className="space-y-1">
+                            <h1 className="animate-element text-3xl sm:text-4xl leading-tight font-bold tracking-tight text-foreground">
+                                Register
                             </h1>
-                            <p className="animate-element text-muted-foreground animate-delay-200">
-                                Crie sua conta e garanta acesso aos melhores
-                                eventos
+                            <p className="animate-element text-sm text-muted-foreground">
+                                Create your account to reserve live events with zero friction
                             </p>
                         </div>
 
@@ -169,7 +158,7 @@ export default function Register({ passwordRules }: Props) {
                                             htmlFor="name"
                                             className="text-sm font-medium text-muted-foreground"
                                         >
-                                            Nome Completo
+                                            Full Name
                                         </Label>
                                         <GlassInputWrapper>
                                             <input
@@ -180,7 +169,7 @@ export default function Register({ passwordRules }: Props) {
                                                 autoFocus
                                                 tabIndex={1}
                                                 autoComplete="name"
-                                                placeholder="Digite seu nome completo"
+                                                placeholder="Enter your full name"
                                                 className="w-full rounded-2xl border-0 bg-transparent p-4 text-sm focus:ring-0 focus:outline-none"
                                             />
                                         </GlassInputWrapper>
@@ -192,7 +181,7 @@ export default function Register({ passwordRules }: Props) {
                                             htmlFor="email"
                                             className="text-sm font-medium text-muted-foreground"
                                         >
-                                            Endereço de E-mail
+                                            Email Address
                                         </Label>
                                         <GlassInputWrapper>
                                             <input
@@ -202,7 +191,7 @@ export default function Register({ passwordRules }: Props) {
                                                 required
                                                 tabIndex={2}
                                                 autoComplete="email"
-                                                placeholder="Digite seu endereço de e-mail"
+                                                placeholder="name@example.com"
                                                 className="w-full rounded-2xl border-0 bg-transparent p-4 text-sm focus:ring-0 focus:outline-none"
                                             />
                                         </GlassInputWrapper>
@@ -214,7 +203,7 @@ export default function Register({ passwordRules }: Props) {
                                             htmlFor="password"
                                             className="text-sm font-medium text-muted-foreground"
                                         >
-                                            Senha
+                                            Password
                                         </Label>
                                         <GlassInputWrapper>
                                             <div className="relative">
@@ -229,7 +218,7 @@ export default function Register({ passwordRules }: Props) {
                                                     required
                                                     tabIndex={3}
                                                     autoComplete="new-password"
-                                                    placeholder="Digite sua senha"
+                                                    placeholder="Create a secure password"
                                                     className="w-full rounded-2xl border-0 bg-transparent p-4 pr-12 text-sm focus:ring-0 focus:outline-none"
                                                     passwordrules={
                                                         passwordRules
@@ -260,7 +249,7 @@ export default function Register({ passwordRules }: Props) {
                                             htmlFor="password_confirmation"
                                             className="text-sm font-medium text-muted-foreground"
                                         >
-                                            Confirmar Senha
+                                            Confirm Password
                                         </Label>
                                         <GlassInputWrapper>
                                             <div className="relative">
@@ -275,7 +264,7 @@ export default function Register({ passwordRules }: Props) {
                                                     required
                                                     tabIndex={4}
                                                     autoComplete="new-password"
-                                                    placeholder="Confirme sua senha"
+                                                    placeholder="Confirm your password"
                                                     className="w-full rounded-2xl border-0 bg-transparent p-4 pr-12 text-sm focus:ring-0 focus:outline-none"
                                                     passwordrules={
                                                         passwordRules
@@ -308,22 +297,22 @@ export default function Register({ passwordRules }: Props) {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="flex w-full animate-element cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors animate-delay-700 hover:bg-primary/90"
+                                        className="flex w-full animate-element cursor-pointer items-center justify-center gap-2 rounded-2xl bg-rose-600 py-4 text-sm font-semibold text-white shadow-lg shadow-rose-600/25 transition-colors animate-delay-700 hover:bg-rose-500"
                                     >
                                         {processing && <Spinner />}
-                                        Criar Conta
+                                        Register
                                     </button>
                                 </>
                             )}
                         </Form>
 
                         <p className="animate-element text-center text-sm text-muted-foreground animate-delay-800">
-                            Já possui uma conta?{' '}
+                            Already have an account?{' '}
                             <Link
                                 href={login()}
-                                className="font-medium text-violet-400 transition-colors hover:underline"
+                                className="font-semibold text-rose-500 transition-colors hover:underline"
                             >
-                                Entrar
+                                Sign In
                             </Link>
                         </p>
                     </div>
