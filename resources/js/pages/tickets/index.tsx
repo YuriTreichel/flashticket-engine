@@ -12,6 +12,7 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 import QRCode from 'qrcode';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface TicketItem {
     id: number;
@@ -56,8 +57,9 @@ export default function MyTickets({ tickets }: MyTicketsProps) {
     }, [tickets]);
 
     return (
-        <div className="min-h-screen bg-zinc-950 p-6 text-zinc-100 md:p-12">
-            <Head title="My Tickets - FlashTicket Engine" />
+        <StorefrontLayout>
+            <div className="p-6 md:p-12">
+                <Head title="My Tickets - FlashTicket Engine" />
 
             <div className="mx-auto max-w-5xl">
                 <div className="mb-8 flex items-center justify-between">
@@ -197,5 +199,6 @@ export default function MyTickets({ tickets }: MyTicketsProps) {
                 )}
             </div>
         </div>
+        </StorefrontLayout>
     );
 }
