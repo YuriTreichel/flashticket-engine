@@ -15,7 +15,7 @@ class EventController extends Controller
     public function index(): Response
     {
         $events = Event::query()
-            ->with('ticketTiers')
+            ->with(['organization', 'ticketTiers.variants'])
             ->latest()
             ->paginate(12);
 
@@ -26,7 +26,7 @@ class EventController extends Controller
 
     public function show(Event $event): Response
     {
-        $event->load('ticketTiers');
+        $event->load(['organization', 'ticketTiers.variants']);
 
         $ticketTiers = $event->ticketTiers->map(function (TicketTier $tier): TicketTier {
             $activeReservations = (int) $tier->reservations()->active()->sum('quantity');

@@ -36,4 +36,3 @@ enum CanadianProvince: string
         };
     }
 }
-

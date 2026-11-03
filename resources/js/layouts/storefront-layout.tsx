@@ -128,3 +128,4 @@ export function StorefrontLayout({ children }: StorefrontLayoutProps) {
 }
 
 export default StorefrontLayout;
+

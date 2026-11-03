@@ -10,6 +10,7 @@ final readonly class HoldTicketsData
         public int $userId,
         public int $ticketTierId,
         public int $quantity,
+        public ?int $ticketVariantId = null,
         public ?string $idempotencyKey = null,
     ) {
         if ($quantity <= 0) {
@@ -26,6 +27,7 @@ final readonly class HoldTicketsData
             userId: (int) $data['user_id'],
             ticketTierId: (int) $data['ticket_tier_id'],
             quantity: (int) $data['quantity'],
+            ticketVariantId: isset($data['ticket_variant_id']) ? (int) $data['ticket_variant_id'] : null,
             idempotencyKey: isset($data['idempotency_key']) ? (string) $data['idempotency_key'] : null,
         );
     }

@@ -16,4 +16,3 @@ enum TicketStatus: string
         return $this === self::VALID;
     }
 }
-

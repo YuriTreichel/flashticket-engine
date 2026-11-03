@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Reservation;
-use App\Models\User;
 use App\Models\TicketTier;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

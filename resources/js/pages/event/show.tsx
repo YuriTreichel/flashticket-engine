@@ -18,6 +18,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
+interface TicketVariant {
+    id: number;
+    name: string;
+    category: string;
+    discount_percent: number;
+    requires_id_proof: boolean;
+}
+
 interface TicketTier {
     id: number;
     event_id: number;
@@ -26,6 +34,7 @@ interface TicketTier {
     total_quantity: number;
     available_quantity: number;
     is_available: boolean;
+    variants?: TicketVariant[];
 }
 
 interface EventItem {
@@ -37,6 +46,11 @@ interface EventItem {
     category: string;
     start_date: string;
     end_date: string | null;
+    organization?: {
+        id: number;
+        name: string;
+        business_type: string;
+    };
 }
 
 interface PageProps {
@@ -61,10 +75,21 @@ export default function EventShow() {
     const [selectedTier, setSelectedTier] = useState<TicketTier | null>(
         ticketTiers?.find((tier) => tier.is_available && tier.available_quantity > 0) || null
     );
+    const [selectedVariant, setSelectedVariant] = useState<TicketVariant | null>(null);
     const [quantity, setQuantity] = useState(1);
+
+    // Sync selected variant when tier changes
+    useEffect(() => {
+        if (selectedTier?.variants && selectedTier.variants.length > 0) {
+            setSelectedVariant(selectedTier.variants[0]);
+        } else {
+            setSelectedVariant(null);
+        }
+    }, [selectedTier]);
 
     const { data, setData, post, processing, errors } = useForm({
         ticket_tier_id: selectedTier?.id || '',
+        ticket_variant_id: selectedVariant?.id || '',
         quantity: 1,
     });
 
@@ -73,10 +98,11 @@ export default function EventShow() {
             setData((prev) => ({
                 ...prev,
                 ticket_tier_id: selectedTier.id,
+                ticket_variant_id: selectedVariant?.id || '',
                 quantity: quantity,
             }));
         }
-    }, [selectedTier, quantity]);
+    }, [selectedTier, selectedVariant, quantity]);
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -92,8 +118,10 @@ export default function EventShow() {
         post('/reservations');
     };
 
-    const unitPrice = selectedTier ? Number(selectedTier.price) : 0;
-    const subtotal = unitPrice * quantity;
+    const basePrice = selectedTier ? Number(selectedTier.price) : 0;
+    const discountMultiplier = selectedVariant ? (100 - selectedVariant.discount_percent) / 100 : 1;
+    const effectiveUnitPrice = basePrice * discountMultiplier;
+    const subtotal = effectiveUnitPrice * quantity;
 
     return (
         <div className="min-h-screen bg-[#09090b] text-zinc-100 selection:bg-rose-500 selection:text-white font-sans antialiased">
@@ -271,6 +299,54 @@ export default function EventShow() {
 
                                 {selectedTier && (
                                     <>
+                                        {/* Ticket Variant Selector (Adult, Student 50%, Child, Senior) */}
+                                        {selectedTier.variants && selectedTier.variants.length > 0 && (
+                                            <div className="space-y-2 border-t border-zinc-800 pt-4">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                                                        Attendee Type & Discounts
+                                                    </span>
+                                                    {selectedVariant && selectedVariant.discount_percent > 0 && (
+                                                        <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-[10px]">
+                                                            {selectedVariant.discount_percent}% OFF applied
+                                                        </Badge>
+                                                    )}
+                                                </div>
+
+                                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                                    {selectedTier.variants.map((v) => {
+                                                        const isVarSelected = selectedVariant?.id === v.id;
+                                                        const varUnitPrice = Number(selectedTier.price) * ((100 - v.discount_percent) / 100);
+
+                                                        return (
+                                                            <button
+                                                                type="button"
+                                                                key={v.id}
+                                                                onClick={() => setSelectedVariant(v)}
+                                                                className={`flex flex-col text-left p-2.5 rounded-lg border transition-all text-xs ${
+                                                                    isVarSelected
+                                                                        ? 'border-rose-500 bg-rose-500/10 text-white font-medium ring-1 ring-rose-500/30'
+                                                                        : 'border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
+                                                                }`}
+                                                            >
+                                                                <div className="flex items-center justify-between w-full">
+                                                                    <span className="font-semibold text-zinc-200">{v.name}</span>
+                                                                    <span className="font-mono text-zinc-100 font-bold">
+                                                                        CAD ${varUnitPrice.toFixed(2)}
+                                                                    </span>
+                                                                </div>
+                                                                {v.requires_id_proof && (
+                                                                    <span className="text-[10px] text-zinc-500 mt-1">
+                                                                        ID verification at gate
+                                                                    </span>
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
                                         {/* Quantity Selector */}
                                         <div className="flex items-center justify-between border-t border-zinc-800 pt-4">
                                             <span className="text-sm font-medium text-zinc-300">Quantity</span>

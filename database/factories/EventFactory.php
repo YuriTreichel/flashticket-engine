@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Event;
@@ -22,7 +24,7 @@ class EventFactory extends Factory
             'description' => $this->faker->paragraph(),
             'start_date' => $this->faker->dateTimeBetween('+1 week', '+1 month'),
             'end_date' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
-            'location' => $this->faker->city()
+            'location' => $this->faker->city(),
         ];
     }
 }

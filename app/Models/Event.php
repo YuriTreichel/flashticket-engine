@@ -8,17 +8,21 @@ use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property string $title
+ * @property int|null $organization_id
+ * @property string $name
  * @property string|null $description
- * @property Carbon|null $start_time
- * @property Carbon|null $end_time
- * @property string|null $venue
- * @property string $status
+ * @property string|null $location
+ * @property string|null $image_url
+ * @property string $category
+ * @property Carbon|null $start_date
+ * @property Carbon|null $end_date
+ * @property-read Organization|null $organization
  * @property-read Collection<int, TicketTier> $ticketTiers
  */
 class Event extends Model
@@ -27,6 +31,14 @@ class Event extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    /**
+     * @return BelongsTo<Organization, $this>
+     */
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
 
     /**
      * @return HasMany<TicketTier, $this>

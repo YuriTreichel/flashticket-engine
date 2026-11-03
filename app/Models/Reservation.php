@@ -16,10 +16,12 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property int $ticket_tier_id
+ * @property int|null $ticket_variant_id
  * @property int $quantity
  * @property ReservationStatus $status
  * @property Carbon|null $expires_at
  * @property-read TicketTier $ticketTier
+ * @property-read TicketVariant|null $ticketVariant
  * @property-read User $user
  */
 class Reservation extends Model
@@ -30,6 +32,7 @@ class Reservation extends Model
     protected $fillable = [
         'user_id',
         'ticket_tier_id',
+        'ticket_variant_id',
         'quantity',
         'status',
         'expires_at',
@@ -53,6 +56,14 @@ class Reservation extends Model
     public function ticketTier(): BelongsTo
     {
         return $this->belongsTo(TicketTier::class);
+    }
+
+    /**
+     * @return BelongsTo<TicketVariant, $this>
+     */
+    public function ticketVariant(): BelongsTo
+    {
+        return $this->belongsTo(TicketVariant::class);
     }
 
     /**

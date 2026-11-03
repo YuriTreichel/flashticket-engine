@@ -1,20 +1,23 @@
 <?php
 
-use App\Models\User;
-use App\Models\TicketTier;
+declare(strict_types=1);
+
+use App\Enums\ReservationStatus;
 use App\Models\Reservation;
+use App\Models\TicketTier;
+use App\Models\User;
 use App\Services\ReservationService;
 
 test('it can reserve tickets when stock is available', function () {
     $user = User::factory()->create();
     $tier = TicketTier::factory()->create(['total_quantity' => 10]);
     $service = app(ReservationService::class);
-    
+
     $reservation = $service->reserve($user->id, $tier->id, 2);
-    
+
     $this->assertEquals(2, $reservation->quantity);
     $this->assertEquals($user->id, $reservation->user_id);
-    $this->assertEquals(App\Enums\ReservationStatus::PENDING, $reservation->status);
+    $this->assertEquals(ReservationStatus::PENDING, $reservation->status);
     $this->assertNotNull($reservation->expires_at);
 });
 
@@ -33,11 +36,11 @@ test('it ignores expired reservations when calculating available stock', functio
     $tier = TicketTier::factory()->create(['total_quantity' => 5]);
 
     Reservation::factory()->create([
-        'user_id'        => $user1->id,
+        'user_id' => $user1->id,
         'ticket_tier_id' => $tier->id,
-        'quantity'       => 5,
-        'status'         => 'pending',
-        'expires_at'     => now()->subMinutes(15),
+        'quantity' => 5,
+        'status' => 'pending',
+        'expires_at' => now()->subMinutes(15),
     ]);
 
     $service = app(ReservationService::class);
@@ -46,4 +49,3 @@ test('it ignores expired reservations when calculating available stock', functio
 
     $this->assertNotEquals(0, $reservation->quantity);
 });
-
