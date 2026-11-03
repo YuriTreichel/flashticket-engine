@@ -14,6 +14,7 @@ Route::get('/', [EventController::class, 'index'])->name('home');
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 Route::get('/architecture', [PlatformController::class, 'architecture'])->name('architecture');
 Route::get('/metrics', [PlatformController::class, 'metrics'])->name('metrics');
+Route::inertia('/faq', 'faq/index')->name('faq');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
