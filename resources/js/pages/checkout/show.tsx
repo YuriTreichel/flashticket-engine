@@ -1,12 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
-import { ReservationTimer } from '@/components/domain/ReservationTimer';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import axios from 'axios';
 import {
     CheckCircle2,
     CreditCard,
@@ -16,8 +9,15 @@ import {
     ArrowLeft,
     Loader2,
 } from 'lucide-react';
-import axios from 'axios';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { ReservationTimer } from '@/components/domain/ReservationTimer';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 
 interface CheckoutProps {
     reservation: {
@@ -70,8 +70,12 @@ export default function CheckoutShow({ reservation }: CheckoutProps) {
     const { post, processing } = useForm();
 
     const handleCalculateTax = async () => {
-        if (!postalCode.trim()) return;
+        if (!postalCode.trim()) {
+            return;
+        }
+
         setCalculatingTax(true);
+
         try {
             const res = await axios.post(
                 `/reservations/${reservation.id}/tax`,
@@ -79,6 +83,7 @@ export default function CheckoutShow({ reservation }: CheckoutProps) {
                     postal_code: postalCode,
                 },
             );
+
             if (res.data.success) {
                 setTaxData(res.data.tax);
                 toast.success(
@@ -275,11 +280,22 @@ export default function CheckoutShow({ reservation }: CheckoutProps) {
                                     <div className="flex justify-between text-zinc-400">
                                         <div className="flex flex-col">
                                             <span>
-                                                {reservation.ticket_tier.name} × {reservation.quantity}
+                                                {reservation.ticket_tier.name} ×{' '}
+                                                {reservation.quantity}
                                             </span>
                                             {reservation.ticket_variant && (
-                                                <span className="text-xs text-rose-400 font-medium">
-                                                    Tier: {reservation.ticket_variant.name} ({reservation.ticket_variant.discount_percent > 0 ? `${reservation.ticket_variant.discount_percent}% off` : 'Standard'})
+                                                <span className="text-xs font-medium text-rose-400">
+                                                    Tier:{' '}
+                                                    {
+                                                        reservation
+                                                            .ticket_variant.name
+                                                    }{' '}
+                                                    (
+                                                    {reservation.ticket_variant
+                                                        .discount_percent > 0
+                                                        ? `${reservation.ticket_variant.discount_percent}% off`
+                                                        : 'Standard'}
+                                                    )
                                                 </span>
                                             )}
                                         </div>

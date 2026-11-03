@@ -1,8 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { useEffect, useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import axios from 'axios';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 import {
     ArrowLeft,
     CheckCircle2,
@@ -11,8 +9,10 @@ import {
     Camera,
     RefreshCw,
 } from 'lucide-react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import axios from 'axios';
+import { useEffect, useState, useRef } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ScannerProps {
     event: {
@@ -68,7 +68,9 @@ export default function OrganizerScanner({ event }: ScannerProps) {
     };
 
     useEffect(() => {
-        if (!scanningActive) return;
+        if (!scanningActive) {
+            return;
+        }
 
         const scanner = new Html5QrcodeScanner(
             'qr-reader',

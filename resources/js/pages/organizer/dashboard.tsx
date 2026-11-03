@@ -1,7 +1,4 @@
 import { Head, Link } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
     QrCode,
     Calendar,
@@ -11,6 +8,9 @@ import {
     Users,
     TrendingUp,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface EventItem {
     id: number;
@@ -65,7 +65,7 @@ export default function OrganizerDashboard({
                     </div>
 
                     <Link href="/organizer/events/create">
-                        <Button className="gap-2 bg-white text-zinc-950 font-bold hover:bg-zinc-200">
+                        <Button className="gap-2 bg-white font-bold text-zinc-950 hover:bg-zinc-200">
                             Create New Event
                         </Button>
                     </Link>

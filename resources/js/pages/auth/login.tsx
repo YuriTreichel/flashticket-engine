@@ -1,4 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import PasskeyVerify from '@/components/passkey-verify';
@@ -8,7 +9,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import { Eye, EyeOff, Zap } from 'lucide-react';
 
 // --- HELPER COMPONENTS (ICONS) ---
 
@@ -116,23 +116,31 @@ export default function Login({ status, canResetPassword }: Props) {
                     <div className="flex flex-col gap-6">
                         {/* Logo Link to home */}
                         <div className="animate-element">
-                            <Link href="/" className="inline-flex items-center gap-2.5 group">
+                            <Link
+                                href="/"
+                                className="group inline-flex items-center gap-2.5"
+                            >
                                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 shadow-md shadow-rose-600/25 transition-transform group-hover:scale-105">
-                                    <Zap className="h-4.5 w-4.5 text-white fill-white" />
+                                    <Zap className="h-4.5 w-4.5 fill-white text-white" />
                                 </div>
                                 <div className="flex items-baseline tracking-tight">
-                                    <span className="text-xl font-black text-foreground">flash</span>
-                                    <span className="text-xl font-light text-muted-foreground">ticket</span>
+                                    <span className="text-xl font-black text-foreground">
+                                        flash
+                                    </span>
+                                    <span className="text-xl font-light text-muted-foreground">
+                                        ticket
+                                    </span>
                                 </div>
                             </Link>
                         </div>
 
                         <div className="space-y-1">
-                            <h1 className="animate-element text-3xl sm:text-4xl leading-tight font-bold tracking-tight text-foreground">
+                            <h1 className="animate-element text-3xl leading-tight font-bold tracking-tight text-foreground sm:text-4xl">
                                 Sign In
                             </h1>
                             <p className="animate-element text-sm text-muted-foreground">
-                                Access your account to manage your reservations and tickets
+                                Access your account to manage your reservations
+                                and tickets
                             </p>
                         </div>
 
@@ -287,7 +295,7 @@ export default function Login({ status, canResetPassword }: Props) {
             {heroImageSrc && (
                 <section className="relative hidden flex-1 p-4 md:block">
                     <div
-                        className="absolute inset-4 animate-slide-left rounded-3xl bg-cover bg-center animate-delay-300"
+                        className="animate-slide-left absolute inset-4 rounded-3xl bg-cover bg-center animate-delay-300"
                         style={{ backgroundImage: `url(${heroImageSrc})` }}
                     ></div>
                     {sampleTestimonials.length > 0 && (

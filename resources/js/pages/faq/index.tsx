@@ -12,10 +12,10 @@ import {
     ChevronDown,
     Zap,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 const FAQS = [
@@ -52,18 +52,29 @@ export default function FaqIndex() {
                 <div className="mx-auto max-w-4xl">
                     <div className="mb-8">
                         <Link href="/">
-                            <Button variant="ghost" size="sm" className="gap-2 text-zinc-400 hover:text-white mb-2">
-                                <ArrowLeft className="h-4 w-4" /> Back to Storefront
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="mb-2 gap-2 text-zinc-400 hover:text-white"
+                            >
+                                <ArrowLeft className="h-4 w-4" /> Back to
+                                Storefront
                             </Button>
                         </Link>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black text-white tracking-tight">Frequently Asked Questions</h1>
-                            <Badge variant="outline" className="text-rose-400 border-rose-500/30">
+                            <h1 className="text-3xl font-black tracking-tight text-white">
+                                Frequently Asked Questions
+                            </h1>
+                            <Badge
+                                variant="outline"
+                                className="border-rose-500/30 text-rose-400"
+                            >
                                 Support & FAQ
                             </Badge>
                         </div>
-                        <p className="text-sm text-zinc-400 mt-1">
-                            Learn how our concurrency engine, checkout locks, and fraud prevention work.
+                        <p className="mt-1 text-sm text-zinc-400">
+                            Learn how our concurrency engine, checkout locks,
+                            and fraud prevention work.
                         </p>
                     </div>
 
@@ -74,23 +85,27 @@ export default function FaqIndex() {
                             return (
                                 <Card
                                     key={idx}
-                                    className="border-zinc-800 bg-zinc-900/60 overflow-hidden transition-all duration-200 cursor-pointer hover:border-zinc-700"
-                                    onClick={() => setOpenIndex(isOpen ? null : idx)}
+                                    className="cursor-pointer overflow-hidden border-zinc-800 bg-zinc-900/60 transition-all duration-200 hover:border-zinc-700"
+                                    onClick={() =>
+                                        setOpenIndex(isOpen ? null : idx)
+                                    }
                                 >
-                                    <div className="p-6 flex items-center justify-between gap-4">
-                                        <h3 className="font-bold text-white text-base flex items-center gap-2">
-                                            <HelpCircle className="h-4 w-4 text-rose-400 shrink-0" />
+                                    <div className="flex items-center justify-between gap-4 p-6">
+                                        <h3 className="flex items-center gap-2 text-base font-bold text-white">
+                                            <HelpCircle className="h-4 w-4 shrink-0 text-rose-400" />
                                             {faq.q}
                                         </h3>
                                         <ChevronDown
-                                            className={`h-4 w-4 text-zinc-400 shrink-0 transition-transform duration-200 ${
-                                                isOpen ? 'rotate-180 text-white' : ''
+                                            className={`h-4 w-4 shrink-0 text-zinc-400 transition-transform duration-200 ${
+                                                isOpen
+                                                    ? 'rotate-180 text-white'
+                                                    : ''
                                             }`}
                                         />
                                     </div>
 
                                     {isOpen && (
-                                        <CardContent className="px-6 pb-6 pt-0 text-sm text-zinc-300 leading-relaxed border-t border-zinc-800/60 mt-2 pt-4">
+                                        <CardContent className="mt-2 border-t border-zinc-800/60 px-6 pt-0 pt-4 pb-6 text-sm leading-relaxed text-zinc-300">
                                             {faq.a}
                                         </CardContent>
                                     )}
@@ -103,4 +118,3 @@ export default function FaqIndex() {
         </StorefrontLayout>
     );
 }
-

@@ -1,11 +1,11 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { Eye, EyeOff, Zap } from 'lucide-react';
 
 export interface Testimonial {
     avatarSrc: string;
@@ -122,23 +122,31 @@ export default function Register({ passwordRules }: Props) {
                     <div className="flex flex-col gap-6">
                         {/* Logo Link to home */}
                         <div className="animate-element">
-                            <Link href="/" className="inline-flex items-center gap-2.5 group">
+                            <Link
+                                href="/"
+                                className="group inline-flex items-center gap-2.5"
+                            >
                                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 shadow-md shadow-rose-600/25 transition-transform group-hover:scale-105">
-                                    <Zap className="h-4.5 w-4.5 text-white fill-white" />
+                                    <Zap className="h-4.5 w-4.5 fill-white text-white" />
                                 </div>
                                 <div className="flex items-baseline tracking-tight">
-                                    <span className="text-xl font-black text-foreground">flash</span>
-                                    <span className="text-xl font-light text-muted-foreground">ticket</span>
+                                    <span className="text-xl font-black text-foreground">
+                                        flash
+                                    </span>
+                                    <span className="text-xl font-light text-muted-foreground">
+                                        ticket
+                                    </span>
                                 </div>
                             </Link>
                         </div>
 
                         <div className="space-y-1">
-                            <h1 className="animate-element text-3xl sm:text-4xl leading-tight font-bold tracking-tight text-foreground">
+                            <h1 className="animate-element text-3xl leading-tight font-bold tracking-tight text-foreground sm:text-4xl">
                                 Register
                             </h1>
                             <p className="animate-element text-sm text-muted-foreground">
-                                Create your account to reserve live events with zero friction
+                                Create your account to reserve live events with
+                                zero friction
                             </p>
                         </div>
 

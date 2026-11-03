@@ -1,5 +1,5 @@
-import http from 'k6/http';
 import { check, sleep } from 'k6';
+import http from 'k6/http';
 
 // k6 Stress & Concurrency Test Configuration
 // Simulates 500 concurrent virtual users competing for tickets in a flash sale
