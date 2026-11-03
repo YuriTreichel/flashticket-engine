@@ -1,24 +1,22 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { store as reserveStore } from '@/routes/reservations';
-import { login, dashboard } from '@/routes';
 import {
     Calendar,
     MapPin,
     Ticket,
     AlertTriangle,
-    ChevronRight,
-    User,
-    LogIn,
-    LayoutDashboard,
+    ShieldCheck,
+    ArrowLeft,
+    Clock,
+    Zap,
     Plus,
     Minus,
+    Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Spinner } from '@/components/ui/spinner';
 
 interface TicketTier {
     id: number;
@@ -30,17 +28,19 @@ interface TicketTier {
     is_available: boolean;
 }
 
-interface Event {
+interface EventItem {
     id: number;
     name: string;
     description: string | null;
     location: string;
+    image_url: string | null;
+    category: string;
     start_date: string;
     end_date: string | null;
 }
 
 interface PageProps {
-    event: Event;
+    event: EventItem;
     ticketTiers: TicketTier[];
     auth: {
         user: {
@@ -55,36 +55,19 @@ interface PageProps {
     };
 }
 
-const GlassCard = ({
-    children,
-    className = '',
-}: {
-    children: React.ReactNode;
-    className?: string;
-}) => (
-    <div
-        className={`rounded-3xl border border-white/10 bg-card/40 shadow-2xl backdrop-blur-xl dark:bg-zinc-900/40 ${className}`}
-    >
-        {children}
-    </div>
-);
-
 export default function EventShow() {
-    const { event, ticketTiers, auth, flash } = usePage<any>()
-        .props as PageProps;
+    const { event, ticketTiers, auth, flash } = usePage<any>().props as PageProps;
+
     const [selectedTier, setSelectedTier] = useState<TicketTier | null>(
-        ticketTiers.find(
-            (tier) => tier.is_available && tier.available_quantity > 0,
-        ) || null,
+        ticketTiers?.find((tier) => tier.is_available && tier.available_quantity > 0) || null
     );
     const [quantity, setQuantity] = useState(1);
 
-    const { data, setData, post, processing, errors, clearErrors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         ticket_tier_id: selectedTier?.id || '',
         quantity: 1,
     });
 
-    // Update form when selected tier or quantity changes
     useEffect(() => {
         if (selectedTier) {
             setData((prev) => ({
@@ -95,371 +78,265 @@ export default function EventShow() {
         }
     }, [selectedTier, quantity]);
 
-    // Handle toast messages from session redirects
     useEffect(() => {
-        if (flash?.success) {
-            toast.success(flash.success);
-        }
-        if (flash?.error) {
-            toast.error(flash.error);
-        }
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
     }, [flash]);
-
-    const handleIncrement = () => {
-        if (!selectedTier) return;
-        if (quantity < selectedTier.available_quantity) {
-            setQuantity((prev) => prev + 1);
-        } else {
-            toast.warning(
-                `Limite de ${selectedTier.available_quantity} ingressos disponíveis atingido.`,
-            );
-        }
-    };
-
-    const handleDecrement = () => {
-        if (quantity > 1) {
-            setQuantity((prev) => prev - 1);
-        }
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        clearErrors();
-
         if (!auth.user) {
-            toast.info('Por favor, faça login para reservar seus ingressos.');
+            window.location.href = '/login';
             return;
         }
-
-        if (!selectedTier) {
-            toast.error('Por favor, selecione um setor/lote.');
-            return;
-        }
-
-        post(reserveStore.url(), {
-            onSuccess: () => {
-                toast.success(
-                    'Sua reserva provisória foi criada! Você tem 10 minutos para concluir o pagamento.',
-                );
-                setQuantity(1);
-            },
-            onError: (err) => {
-                if (err.quantity) {
-                    toast.error(err.quantity);
-                } else if (err.ticket_tier_id) {
-                    toast.error(err.ticket_tier_id);
-                } else {
-                    toast.error('Erro ao realizar reserva. Tente novamente.');
-                }
-            },
-        });
+        post('/reservations');
     };
 
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('pt-BR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
-
-    const formatPrice = (price: string | number) => {
-        const parsed = typeof price === 'string' ? parseFloat(price) : price;
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(parsed);
-    };
-
-    // Immersive background images matching the event or standard high quality events
-    const heroImage = `https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80`;
+    const unitPrice = selectedTier ? Number(selectedTier.price) : 0;
+    const subtotal = unitPrice * quantity;
 
     return (
-        <div className="font-geist relative flex min-h-screen flex-col justify-between overflow-x-hidden bg-background text-foreground">
-            <Head title={event.name} />
+        <div className="min-h-screen bg-[#09090b] text-zinc-100 selection:bg-rose-500 selection:text-white font-sans antialiased">
+            <Head title={`${event.name} — FlashTicket`} />
 
-            {/* Glowing background blob */}
-            <div className="pointer-events-none absolute top-[-10%] left-[-10%] h-[50dvw] w-[50dvw] rounded-full bg-violet-600/10 blur-[120px]" />
-            <div className="pointer-events-none absolute right-[-10%] bottom-[-10%] h-[50dvw] w-[50dvw] rounded-full bg-fuchsia-600/10 blur-[120px]" />
-
-            {/* Header Navigation */}
-            <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-background/60 px-6 py-4 backdrop-blur-md">
-                <div className="mx-auto flex max-w-6xl items-center justify-between">
-                    <Link
-                        href="/"
-                        className="flex items-center gap-2 text-xl font-bold tracking-tighter text-foreground"
-                    >
-                        <Ticket className="h-6 w-6 text-violet-400" />
-                        Flash<span className="text-violet-400">Ticket</span>
+            {/* Navbar */}
+            <header className="sticky top-0 z-50 border-b border-zinc-800/60 bg-[#09090b]/80 backdrop-blur-2xl">
+                <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
+                    <Link href="/" className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+                        <ArrowLeft className="h-4 w-4" />
+                        <span>Back to all events</span>
                     </Link>
-                    <nav className="flex items-center gap-4">
+
+                    <div className="flex items-center gap-3">
                         {auth.user ? (
-                            <Link
-                                href={dashboard()}
-                                className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-800/40 px-4 py-2 text-sm font-medium transition-colors hover:bg-zinc-800/80"
-                            >
-                                <LayoutDashboard className="h-4 w-4 text-violet-400" />
-                                Dashboard
+                            <Link href="/my-tickets">
+                                <Button variant="outline" size="sm" className="gap-2 border-zinc-800 bg-zinc-900/80">
+                                    <Ticket className="h-4 w-4 text-rose-400" />
+                                    <span>My Tickets</span>
+                                </Button>
                             </Link>
                         ) : (
-                            <Link
-                                href={login()}
-                                className="flex items-center gap-2 rounded-2xl bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                            >
-                                <LogIn className="h-4 w-4" />
-                                Entrar
+                            <Link href="/login">
+                                <Button variant="ghost" size="sm" className="text-zinc-300">
+                                    Sign In
+                                </Button>
                             </Link>
                         )}
-                    </nav>
+                    </div>
                 </div>
             </header>
 
-            {/* Main Content container */}
-            <main className="relative z-10 mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 items-start gap-8 px-6 py-8 lg:grid-cols-3">
-                {/* Left side: Event Info & Description */}
-                <div className="space-y-6 lg:col-span-2">
-                    {/* Event Banner */}
-                    <div className="group relative h-64 overflow-hidden rounded-3xl border border-white/10 shadow-2xl md:h-96">
-                        <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                            style={{ backgroundImage: `url(${heroImage})` }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-                        <div className="absolute right-6 bottom-6 left-6">
-                            <Badge className="mb-3 border border-violet-500/30 bg-violet-500/20 px-3 py-1 text-xs font-semibold tracking-wider text-violet-300 uppercase backdrop-blur-md">
-                                Evento Disponível
-                            </Badge>
-                            <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow-md md:text-5xl">
-                                {event.name}
-                            </h1>
-                        </div>
-                    </div>
-
-                    {/* Metadata Card */}
-                    <GlassCard className="p-6 md:p-8">
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            <div className="flex items-start gap-4">
-                                <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 p-3 text-violet-400">
-                                    <Calendar className="h-6 w-6" />
-                                </div>
-                                <div className="space-y-1">
-                                    <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                                        Data e Horário
-                                    </h4>
-                                    <p className="text-sm leading-relaxed font-medium">
-                                        {formatDate(event.start_date)}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4">
-                                <div className="rounded-2xl border border-fuchsia-500/20 bg-fuchsia-500/10 p-3 text-fuchsia-400">
-                                    <MapPin className="h-6 w-6" />
-                                </div>
-                                <div className="space-y-1">
-                                    <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                                        Localização
-                                    </h4>
-                                    <p className="text-sm leading-relaxed font-medium">
-                                        {event.location}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {event.description && (
-                            <div className="mt-8 space-y-4 border-t border-white/5 pt-8">
-                                <h3 className="text-lg font-semibold tracking-tight">
-                                    Sobre o Evento
-                                </h3>
-                                <p className="text-sm leading-relaxed whitespace-pre-line text-muted-foreground">
-                                    {event.description}
-                                </p>
-                            </div>
-                        )}
-                    </GlassCard>
+            {/* Event Header Banner (Luma Style) */}
+            <div className="relative border-b border-zinc-800/80 bg-zinc-950">
+                <div className="relative h-72 sm:h-96 w-full overflow-hidden">
+                    <img
+                        src={event.image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200'}
+                        alt={event.name}
+                        className="h-full w-full object-cover object-center brightness-50"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/60 to-transparent" />
                 </div>
 
-                {/* Right side: Tickets purchase card */}
-                <div className="lg:col-span-1">
-                    <GlassCard className="sticky top-24 space-y-6 p-6 md:p-8">
+                <div className="mx-auto max-w-7xl px-6 -mt-24 relative z-10 pb-8">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                        <Badge className="bg-rose-500/20 text-rose-300 border-rose-500/30">
+                            {event.category || 'Special Event'}
+                        </Badge>
+                        <Badge variant="outline" className="border-white/20 text-zinc-300">
+                            Pessimistic Hold Guaranteed
+                        </Badge>
+                    </div>
+
+                    <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight max-w-3xl leading-tight">
+                        {event.name}
+                    </h1>
+
+                    <div className="mt-4 flex flex-wrap items-center gap-6 text-sm text-zinc-300">
+                        <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-rose-400" />
+                            <span>
+                                {new Date(event.start_date).toLocaleDateString('en-CA', {
+                                    weekday: 'long',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                })}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-rose-400" />
+                            <span>{event.location}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content & Ticket Selection Layout */}
+            <main className="mx-auto max-w-7xl px-6 py-10">
+                <div className="grid gap-12 lg:grid-cols-12">
+                    {/* Left Column: Event Description & Highlights */}
+                    <div className="lg:col-span-7 space-y-8">
                         <div>
-                            <h3 className="text-xl font-bold tracking-tight">
-                                Ingressos
-                            </h3>
-                            <p className="mt-1 text-xs text-muted-foreground">
-                                Selecione o setor e a quantidade desejada
+                            <h2 className="text-xl font-bold text-white mb-3">About this Event</h2>
+                            <p className="text-zinc-300 leading-relaxed whitespace-pre-line text-sm sm:text-base">
+                                {event.description || 'Join us for this premier live event experience.'}
                             </p>
                         </div>
 
-                        {/* List of Tiers */}
-                        <div className="space-y-3">
-                            {ticketTiers.map((tier) => {
-                                const isSelected = selectedTier?.id === tier.id;
-                                const isSoldOut = tier.available_quantity <= 0;
-
-                                return (
-                                    <button
-                                        key={tier.id}
-                                        type="button"
-                                        disabled={isSoldOut}
-                                        onClick={() => {
-                                            setSelectedTier(tier);
-                                            setQuantity(1);
-                                        }}
-                                        className={`group relative flex w-full flex-col gap-2 overflow-hidden rounded-2xl border p-4 text-left transition-all ${
-                                            isSoldOut
-                                                ? 'cursor-not-allowed border-zinc-800/40 bg-zinc-950/20 opacity-50'
-                                                : isSelected
-                                                  ? 'border-violet-400/60 bg-violet-500/10 shadow-[0_0_15px_rgba(139,92,246,0.15)]'
-                                                  : 'cursor-pointer border-white/5 bg-zinc-800/10 hover:border-white/10 hover:bg-zinc-800/20'
-                                        }`}
-                                    >
-                                        <div className="flex w-full items-start justify-between">
-                                            <div className="text-sm font-semibold tracking-tight text-foreground transition-colors group-hover:text-violet-300">
-                                                {tier.name}
-                                            </div>
-                                            <div className="text-sm font-bold text-violet-400">
-                                                {formatPrice(tier.price)}
-                                            </div>
-                                        </div>
-
-                                        <div className="flex w-full items-center justify-between text-xs">
-                                            {isSoldOut ? (
-                                                <Badge
-                                                    variant="destructive"
-                                                    className="rounded-md border border-red-500/30 bg-red-500/20 px-2 py-0.5 font-semibold text-red-300"
-                                                >
-                                                    Esgotado
-                                                </Badge>
-                                            ) : (
-                                                <Badge
-                                                    variant="outline"
-                                                    className={`rounded-md px-2 py-0.5 font-medium ${
-                                                        tier.available_quantity <=
-                                                        10
-                                                            ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
-                                                            : 'border-green-500/30 bg-green-500/10 text-green-300'
-                                                    }`}
-                                                >
-                                                    {tier.available_quantity}{' '}
-                                                    restantes
-                                                </Badge>
-                                            )}
-                                        </div>
-                                    </button>
-                                );
-                            })}
+                        <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-6 space-y-4">
+                            <h3 className="text-base font-bold text-white flex items-center gap-2">
+                                <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                                FlashTicket Safe Checkout Promise
+                            </h3>
+                            <ul className="space-y-2 text-xs sm:text-sm text-zinc-400">
+                                <li className="flex items-start gap-2">
+                                    <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                                    <span>
+                                        <strong>10-Minute Cart Hold:</strong> Once you click reserve, your tickets are locked
+                                        exclusively for you while you check out.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                                    <span>
+                                        <strong>Zero Overselling:</strong> Real-time database locking prevents double-booking
+                                        even during millisecond traffic spikes.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                                    <span>
+                                        <strong>Cryptographic QR Codes:</strong> Fraud-resistant tickets delivered instantly to
+                                        your wallet upon payment.
+                                    </span>
+                                </li>
+                            </ul>
                         </div>
+                    </div>
 
-                        {selectedTier && (
-                            <form
-                                onSubmit={handleSubmit}
-                                className="space-y-6 border-t border-white/5 pt-4"
-                            >
-                                {/* Quantity Selector */}
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                                        Quantidade
-                                    </label>
-                                    <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-zinc-800/30 p-2">
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={handleDecrement}
-                                            disabled={quantity <= 1}
-                                            className="rounded-xl text-muted-foreground hover:bg-white/5 hover:text-foreground"
-                                        >
-                                            <Minus className="h-4 w-4" />
-                                        </Button>
-                                        <span className="px-4 text-lg font-bold">
-                                            {quantity}
-                                        </span>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={handleIncrement}
-                                            disabled={
-                                                quantity >=
-                                                selectedTier.available_quantity
-                                            }
-                                            className="rounded-xl text-muted-foreground hover:bg-white/5 hover:text-foreground"
-                                        >
-                                            <Plus className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                    {errors.quantity && (
-                                        <p className="mt-1 flex items-center gap-1 text-xs text-red-400">
-                                            <AlertTriangle className="h-3 w-3" />
-                                            {errors.quantity}
-                                        </p>
-                                    )}
+                    {/* Right Column: Ticket Tier Selector & Booking Card */}
+                    <div className="lg:col-span-5">
+                        <Card className="sticky top-24 border-zinc-800 bg-zinc-900/90 shadow-2xl rounded-2xl overflow-hidden backdrop-blur">
+                            <div className="p-6 border-b border-zinc-800">
+                                <h3 className="text-lg font-bold text-white">Select Tickets</h3>
+                                <p className="text-xs text-zinc-400 mt-0.5">
+                                    Choose your tier and reserve instantly.
+                                </p>
+                            </div>
+
+                            <CardContent className="p-6 space-y-6">
+                                {/* Ticket Tiers List */}
+                                <div className="space-y-3">
+                                    {ticketTiers?.map((tier) => {
+                                        const isSelected = selectedTier?.id === tier.id;
+                                        const isSoldOut = !tier.is_available || tier.available_quantity <= 0;
+
+                                        return (
+                                            <div
+                                                key={tier.id}
+                                                onClick={() => !isSoldOut && setSelectedTier(tier)}
+                                                className={`relative flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${
+                                                    isSoldOut
+                                                        ? 'opacity-40 cursor-not-allowed border-zinc-800 bg-zinc-950/40'
+                                                        : isSelected
+                                                          ? 'border-rose-500 bg-rose-500/10 shadow-md shadow-rose-500/10'
+                                                          : 'border-zinc-800 bg-zinc-950/60 hover:border-zinc-700'
+                                                }`}
+                                            >
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="font-bold text-sm text-white">{tier.name}</h4>
+                                                        {isSoldOut ? (
+                                                            <Badge variant="secondary" className="text-[10px] bg-zinc-800 text-zinc-400">
+                                                                Sold Out
+                                                            </Badge>
+                                                        ) : (
+                                                            <span className="text-[11px] text-emerald-400 font-medium">
+                                                                {tier.available_quantity} available
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs text-zinc-500">Includes all venue fees</span>
+                                                </div>
+
+                                                <div className="text-right">
+                                                    <div className="text-base font-black text-white font-mono">
+                                                        CAD ${Number(tier.price).toFixed(2)}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
 
-                                {/* Total summary */}
-                                <div className="flex items-center justify-between rounded-2xl border border-violet-500/10 bg-violet-500/5 p-4">
-                                    <div className="text-xs text-muted-foreground">
-                                        Total Provisório
-                                    </div>
-                                    <div className="text-lg font-bold text-violet-400">
-                                        {formatPrice(
-                                            parseFloat(
-                                                selectedTier.price.toString(),
-                                            ) * quantity,
-                                        )}
-                                    </div>
-                                </div>
+                                {selectedTier && (
+                                    <>
+                                        {/* Quantity Selector */}
+                                        <div className="flex items-center justify-between border-t border-zinc-800 pt-4">
+                                            <span className="text-sm font-medium text-zinc-300">Quantity</span>
+                                            <div className="flex items-center gap-3">
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="icon"
+                                                    disabled={quantity <= 1}
+                                                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                                                    className="h-8 w-8 rounded-lg border-zinc-700 bg-zinc-800 hover:bg-zinc-700"
+                                                >
+                                                    <Minus className="h-3.5 w-3.5" />
+                                                </Button>
+                                                <span className="font-mono font-bold text-base text-white w-6 text-center">
+                                                    {quantity}
+                                                </span>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="icon"
+                                                    disabled={quantity >= Math.min(8, selectedTier.available_quantity)}
+                                                    onClick={() => setQuantity((q) => q + 1)}
+                                                    className="h-8 w-8 rounded-lg border-zinc-700 bg-zinc-800 hover:bg-zinc-700"
+                                                >
+                                                    <Plus className="h-3.5 w-3.5" />
+                                                </Button>
+                                            </div>
+                                        </div>
 
-                                {/* Submit button */}
-                                {auth.user ? (
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-6 font-semibold text-primary-foreground shadow-md transition-colors hover:bg-primary/90"
-                                    >
-                                        {processing ? (
-                                            <Spinner className="h-5 w-5 animate-spin text-current" />
-                                        ) : (
-                                            <Ticket className="h-4 w-4" />
-                                        )}
-                                        Reservar Ingressos
-                                    </Button>
-                                ) : (
-                                    <div className="space-y-3">
-                                        <Link
-                                            href={login()}
-                                            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-zinc-800 py-4 text-sm font-semibold transition-colors hover:bg-zinc-700/80"
-                                        >
-                                            <LogIn className="h-4 w-4 text-violet-400" />
-                                            Entrar para Reservar
-                                        </Link>
-                                        <p className="text-center text-[10px] leading-snug text-muted-foreground">
-                                            Você precisa ter uma conta no
-                                            FlashTicket para garantir seus
-                                            ingressos.
-                                        </p>
-                                    </div>
+                                        {/* Subtotal & Action */}
+                                        <div className="space-y-4 border-t border-zinc-800 pt-4">
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-zinc-400">Subtotal ({quantity} tickets)</span>
+                                                <span className="font-bold text-lg text-white font-mono">
+                                                    CAD ${subtotal.toFixed(2)}
+                                                </span>
+                                            </div>
+
+                                            {errors.quantity && (
+                                                <p className="text-xs text-rose-400">{errors.quantity}</p>
+                                            )}
+
+                                            <form onSubmit={handleSubmit}>
+                                                <Button
+                                                    type="submit"
+                                                    disabled={processing || !selectedTier.is_available}
+                                                    className="w-full h-12 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-base shadow-lg shadow-rose-600/30 gap-2"
+                                                >
+                                                    <Zap className="h-4 w-4 fill-white" />
+                                                    {auth.user ? 'Hold & Proceed to Checkout' : 'Sign in to Reserve'}
+                                                </Button>
+                                            </form>
+
+                                            <div className="flex items-center justify-center gap-2 text-xs text-zinc-500">
+                                                <Clock className="h-3.5 w-3.5" />
+                                                <span>10-minute hold starts upon checkout redirect</span>
+                                            </div>
+                                        </div>
+                                    </>
                                 )}
-                            </form>
-                        )}
-                    </GlassCard>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </main>
-
-            {/* Footer */}
-            <footer className="mt-12 border-t border-white/5 py-8 text-center text-xs text-muted-foreground">
-                <div className="mx-auto max-w-6xl px-6">
-                    <p>
-                        &copy; {new Date().getFullYear()} FlashTicket. Todos os
-                        direitos reservados.
-                    </p>
-                </div>
-            </footer>
         </div>
     );
 }
